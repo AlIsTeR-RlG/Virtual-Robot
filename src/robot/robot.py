@@ -109,6 +109,10 @@ while controller_alive:
         
         elif packet.command == Command.STOP:
             print("Robot stopped.")
+            ack = AckPacket(packet.sequence, PacketType.ACK)
+            sock.sendto(ack.encode(), address)
+        
+            controller_alive = False
             
     except socket.timeout:
         
