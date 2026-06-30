@@ -3,15 +3,44 @@ due to having to run in terminal have had to add
 file into import directory.
 
 """
+import time
+import threading
 import socket
 from common.protocols import Command
 from common.protocols import PacketType
 from common.packets import Packet, CommandPacket, AckPacket
 from common.config import ROBOT_PORT, ROBOT_IP, BUFFER_SIZE
 
+#function to send heartbeat 
+def heartbeat():
+    
+    """
+    making a new socket as was running into 
+    errors with only 1 as they were trying to send 
+    and recive at the same time
+    
+    """
+    socks = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    sequence = 0 
+    while True:
+        
+        #cba to make heartbeat subclass so using ack
+        packet = AckPacket(sequence, PacketType.HEARTBEAT)
+        
+        socks.sendto(packet.encode(), (ROBOT_IP, ROBOT_PORT))
+        sequence += 1
+        time.sleep(0.1)
+
+
+
 #defining the controller socket
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 sock.settimeout(0.1)
+
+#opening a thread to constantly send heartbeat to robot
+heartbeat_thread = threading.Thread(target=heartbeat, daemon=True)
+heartbeat_thread.start()
+
 
 #to track what packet we are sending
 sequence = 0
@@ -54,3 +83,8 @@ while True:
             except socket.timeout:
                 print("Timeout...")
                 print("Retransmitting")
+                
+            #here for debugging reasons
+            except ConnectionResetError as e:
+                print(e)
+                print("Robot disconnected.")

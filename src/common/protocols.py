@@ -11,3 +11,4 @@ class Command(Enum):
 class PacketType(Enum):
     COMMAND = 0
     ACK = 1
+    HEARTBEAT = 2
