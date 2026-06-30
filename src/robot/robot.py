@@ -8,7 +8,7 @@ import socket
 import time
 from robot.motion import RobotState
 from common.packets import Packet, CommandPacket, AckPacket
-from common.config import ROBOT_PORT, BUFFER_SIZE
+from common.config import ROBOT_PORT, BUFFER_SIZE, COMMAND_SIZE, ACK_SIZE
 from common.protocols import Command, PacketType
 
 #checking whether a packet is a heartbeat or a command
@@ -61,14 +61,26 @@ while controller_alive:
     # recieve data from socet
         data, address = sock.recvfrom(BUFFER_SIZE)
         
-        last_time = time.time()
+        if len(data) != COMMAND_SIZE and len(data) != ACK_SIZE:
+            print("Packet too small")
+            continue
+        
+        #seperating data with message and tag
+        message = data[:-32]
+        tag = data[-32:]
     
     #decode it and initalise a packet class with it
-        packet = decode_packet(data)
-#    print(packet)
+        packet = decode_packet(message)
+        
+        #checking that the tag on the message is correct
+        if not packet.verify(tag):
+            print("Not authorised tag")
+            continue
+        
+        last_time = time.time()
         
         if packet.type == PacketType.HEARTBEAT:
-            print("heartbeat")
+            #print("heartbeat")
             continue
     
     #checking that no duplicate packets have been sent

@@ -76,9 +76,13 @@ while True:
             #checks if ack has been received
             try:
                 data, _ = sock.recvfrom(BUFFER_SIZE)
-                ack = AckPacket.decode(data)
-                Ack_recieved = True
-                print("Executed successfully")
+                message = data[:-32]
+                ack = AckPacket.decode(message)
+                if ack.type == PacketType.ACK:
+                    Ack_recieved = True
+                    print("Executed successfully")
+                else:
+                    print("Hmm... Something else recieved")
                 
             except socket.timeout:
                 print("Timeout...")
