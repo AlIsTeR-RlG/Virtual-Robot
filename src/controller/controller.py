@@ -71,7 +71,7 @@ while True:
         Ack_recieved = False
         while not Ack_recieved:
             sock.sendto( packet.encode(), (ROBOT_IP, ROBOT_PORT))
-            print(packet)
+            #print(packet)
             
             #checks if ack has been received
             try:
@@ -90,5 +90,9 @@ while True:
                 
             #here for debugging reasons
             except ConnectionResetError as e:
+                pass
+                """
                 print(e)
                 print("Robot disconnected.")
+                
+                """

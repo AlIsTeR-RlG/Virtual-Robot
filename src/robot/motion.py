@@ -39,5 +39,5 @@ class RobotState:
             self.heading = self.heading - 2*math.pi
         
     def __str__(self):
-        return f"Position:\n",f"x: {self.x:.2f}",f"y: {self.y:.2f}",f"heading: {math.degrees(self.heading):.1f}"
+        return f"Position:\n x: {self.x:.2f} \n y: {self.y:.2f} \nheading: {math.degrees(self.heading):.1f}"
         

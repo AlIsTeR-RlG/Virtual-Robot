@@ -101,6 +101,7 @@ while controller_alive:
         if packet.command in actions:
             actions[packet.command]()
             print(packet)
+            print(robro)
             
         #sending Ack
             ack = AckPacket(packet.sequence, PacketType.ACK)
